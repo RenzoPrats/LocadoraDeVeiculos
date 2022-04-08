@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block corpo_pagina %}
+    <div class="site-section bg-personalizado" id="cadastro-section">
+      <hr>
+        <div class="container">
+        <div class="row justify-content-center text-center">
+        <div class="col-7 text-center mb-5">
+          <h2 class="text-black-opacity-04">Identificação</h2>
+            <p class="text-black-opacity-04" id="texto_login_cadastro">Não é cadastrado ainda?</p>
+            <button class="btn-dark" onclick="criarTelaCadastro()" id="botao_cadastro_login">Cadastre-se Agora</button>
+        </div>
+      </div>
+        <div class="row justify-content-center">
+          <div class="col-lg-10 mb-5" id="conteudo-formulario-login-cadastro">
+            <form method='POST' id='formulario_login' name='formulario_login' action='/login'>
+                {% csrf_token %}
+              <div class="form-group row">
+                <div class="col-md-7 mb-4 mb-lg-0">
+                  <input id='email_login' name='email_login' type="email" class="form-control" placeholder="E-mail" required>
+                </div>
+                <div class="col-md-5">
+                  <input id='senha_login' name='senha_login' type="password" class="form-control" placeholder="Senha" required>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-md-3 mr-auto">
+                  <input type="submit" class="btn btn-block btn-primary text-white py-2 px-5" value="Iniciar Sessão">
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+        var CRSF_TOKEN = '{{ csrf_token }}';
+            {% if messages %}
+              {% for m in messages %}
+                  Swal.fire({
+                      icon: 'error',
+                      title: '{{ m }}',
+                      showConfirmButton: true,
+                  })
+              {% endfor %}
+            {% endif %}
+    </script>
+     <script src="{% static 'templates/script_paginas/script_cadastro.js' %}"></script>
+{% endblock %}
+

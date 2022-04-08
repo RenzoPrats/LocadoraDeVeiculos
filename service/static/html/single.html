@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block corpo_pagina %}
+<div class="site-section single-personalizado">
+    <div class="container">
+        <h1 class="titulo-single">Finalize sua Locação</h1>
+        {% for i in carro %}
+        <div class="item-1">
+            <img src="{{ i.imagem_carro.url }}" alt="Image" class="img-fluid imagem-single">
+            <div class="item-1-contents carro-single">
+                  <div class="text-center">
+                      <h3>{{ i.modelo }}</h3>
+                      <div class="rent-price"><span>R${{ i.preco_locacao }}/</span>dia</div>
+                  </div>
+                  <ul class="specs">
+                    <li>
+                      <span>Portas</span>
+                      <span class="spec">{{ i.portas }}</span>
+                    </li>
+                    <li>
+                      <span>Assentos</span>
+                      <span class="spec">{{ i.assentos }}</span>
+                    </li>
+                    <li>
+                      <span>Transmissão</span>
+                      <span class="spec">{% if i.transmissao == 1 %}Autómatico{% else %}Manual{% endif %}</span>
+                    </li>
+                    <li>
+                      <span>Idade Mínima</span>
+                      <span class="spec">{{ i.idade_minima }} anos</span>
+                    </li>
+                  </ul>
+            </div>
+        </div>
+        {% endfor %}
+        <br>
+        <div class="row justify-content-center">
+          <div class="col-lg-10 mb-5" id="conteudo-formulario-login-cadastro">
+            <form id='formulario_locacao' name='formulario_locacao' action='/adicionar_nova_locacao' method='POST'>
+                {% csrf_token %}
+                <label>Dados da locação</label>
+                <div class="row dados-single" id="div-dados-locacao">
+                    <div class="form-group col-md-6">
+                        <label for="data-retirada">Data e Hora de Retirada</label>
+                        <input type="text" id="data-retirada" name="data-retirada" placeholder="Selecione a Data" class="form-control datepicker px-3" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="data-devolucao">Data e Hora de Devolução</label>
+                        <input type="text" id="data-devolucao" name="data-devolucao" placeholder="Selecione a Data" class="form-control datepicker px-3" required>
+                    </div>
+                    <input id="id-carro" name="id-carro" style="display: none">
+                    <div class="form-group col-md-12">
+                        <label for="local-retirada">Local de Retirada</label>
+                        <select id='local-retirada' name='local-retirada' class='custom-select mr-sm-2' onchange="verifica_local_retirada()">
+                            <option value="0">Adicionar novo local</option>
+                        </select>
+                        <input id="id-local-retirada" name="id-local-retirada" style="display: none">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="descricao-local-retirada">Dados do Local de Retirada</label>
+                        <input id='descricao-local-retirada' name='descricao-local-retirada' type='text' class='form-control' placeholder='Descrição' maxlength="100" required>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <input id='cep-local-retirada' name='cep-local-retirada' type='text' class='form-control' placeholder='CEP' maxlength="8" required>
+                    </div>
+                    <div class="form-group col-md-9">
+                        <input id='cidade-local-retirada' name='cidade-local-retirada' type='text' class='form-control' placeholder='Cidade' maxlength="100" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <input id='estado-local-retirada' name='estado-local-retirada' type='text' class='form-control' placeholder='Sigla Estado' maxlength="2" required>
+                    </div>
+                    <div class="form-group col-md-9">
+                        <input id='rua-local-retirada' name='rua-local-retirada' type='text' class='form-control' placeholder='Rua' maxlength="100" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <input id='num-local-retirada' name='num-local-retirada' type='text' class='form-control' placeholder='Número' maxlength="5" required>
+                    </div>
+                    <div id='div-bairro-local-retirada' class="form-group col-md-12">
+                        <input id='bairro-local-retirada' name='bairro-local-retirada' type='text' class='form-control' placeholder='Bairro' maxlength="100" required>
+                    </div>
+
+                     <div class="form-group col-md-12">
+                        <label for="local-devolucao">Local de Devolução</label>
+                        <select id='local-devolucao' name='local-devolucao' class='custom-select mr-sm-2' onchange="verifica_local_devolucao()">
+                            <option value="0">Adicionar novo local</option>
+                            <option value="1">Mesmo Local da Retirada</option>
+                        </select>
+                        <input id="id-local-devolucao" name="id-local-devolucao" style="display: none">
+                     </div>
+                     <div class="form-group col-md-12">
+                        <label for="descricao-local-devolucao">Dados do Local de Devolução</label>
+                        <input id='descricao-local-devolucao' name='descricao-local-devolucao' type='text' class='form-control' placeholder='Descrição' maxlength="100" required>
+                     </div>
+                     <div class="form-group col-md-12">
+                        <input id='cep-local-devolucao' name='cep-local-devolucao' type='text' class='form-control' placeholder='CEP' maxlength="8" required>
+                     </div>
+                     <div class="form-group col-md-9">
+                        <input id='cidade-local-devolucao' name='cidade-local-devolucao' type='text' class='form-control' placeholder='Cidade' maxlength="100" required>
+                     </div>
+                     <div class="form-group col-md-3">
+                        <input id='estado-local-devolucao' name='estado-local-devolucao' type='text' class='form-control' placeholder='Sigla Estado' maxlength="2" required>
+                     </div>
+                     <div class="form-group col-md-9">
+                        <input id='rua-local-devolucao' name='rua-local-devolucao' type='text' class='form-control' placeholder='Rua' maxlength="100" required>
+                     </div>
+                     <div class="form-group col-md-3">
+                        <input id='num-local-devolucao' name='num-local-devolucao' type='text' class='form-control' placeholder='Número' maxlength="5" required>
+                     </div>
+                     <div class="form-group col-md-12">
+                        <input id='bairro-local-devolucao' name='bairro-local-devolucao' type='text' class='form-control' placeholder='Bairro' maxlength="100" required>
+                     </div>
+                </div>
+                <br>
+                <label>Dados de Pagamento</label>
+                <div id='div-dados-pagamento' class="row dados-single">
+                  <div class="form-group col-md-6">
+                      <label for="preco_total">Total</label>
+                      <input class="form-control" id="preco_total" name="preco_total" value="R$00,00" style="font-weight: bold; font-size: x-large" readonly>
+                  </div>
+                  <div id="div-metodo-pagamento" class="form-group col-md-6">
+                      <label for="metodo_pagamento">Método de Pagamento</label>
+                      <select id='metodo_pagamento' name='metodo_pagamento' class='custom-select mr-sm-2' onchange='verifica_metodo_pagamento()'>";
+                          <option value="0">Dinheiro à Vista</option>
+                          <option value="1">Cartão</option>
+                      </select>
+                      <input id="id-dados-pagamento" name="id-dados-pagamento" style="display: none">
+                  </div>
+                </div>
+
+                <br>
+                <label>Dados Complementares</label>
+                <div id='div-dados-complementares' class="row dados-single">
+                  <div class="form-group col-md-6">
+                      <label for="telefone">Número de Celular</label>
+                      <input id='telefone' name='telefone' type='text' maxlength="13" required class='form-control' placeholder='Celular'>
+                  </div>
+                  <div class="form-group col-md-6">
+                      <label for="cnh">Número da CNH</label>
+                       <input id='cnh' name='cnh' type='text' maxlength="11" required class='form-control' placeholder='CNH'>
+                  </div>
+                </div>
+              <div class="form-group row">
+                <div class="col-md-3 mr-auto botao-locacao">
+                  <input type="submit" class="btn btn-block btn-primary text-white py-2 px-5" value="Efetuar Locação">
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+    </div>
+</div>
+    <script src="{% static 'templates/script_paginas/script_locacao.js' %}"></script>
+    <script>
+        {% if messages %}
+              {% for m in messages %}
+                  {% if m.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                      Swal.fire({
+                          icon: 'error',
+                          title: '{{ m }}',
+                          showConfirmButton: true,
+                      })
+                  {% else %}
+                      Swal.fire({
+                          icon: 'success',
+                          title: '{{ m }}',
+                          showConfirmButton: true,
+                      })
+                  {% endif %}
+
+              {% endfor %}
+        {% endif %}
+
+        {% for i in carro %}
+            preco_locacao = parseInt({{ i.preco_locacao }})
+            $("#id-carro").val('{{ i.id }}')
+        {% endfor %}
+        $("#data-retirada").prop('readonly', 'true')
+        $("#data-devolucao").prop('readonly', 'true')
+
+        //mascara numero
+        $("#cnh, #telefone,#cep-local-retirada,#cep-local-devolucao , #num-local-devolucao, #num-local-retirada").on("input", function (e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        //adicionando os pagamentos
+        var pagamentos = []
+        {% for pg in pagamentos %}
+            pagamentos[pagamentos.length] = {
+                "id":{{ pg.id }},
+                "numero_cartao": {{ pg.numero_cartao }},
+                "mes_validade": "{{ pg.mes_validade }}",
+                "ano_validade": "{{ pg.ano_validade }}",
+                "codigo_seguranca": "{{ pg.codigo_seguranca }}",
+                "descricao": "{{ pg.descricao }}",
+                "tipo_cartao": "{{ pg.tipo_cartao }}",
+                "nome_cartao": "{{ pg.nome_cartao }}",
+            }
+        {% endfor %}
+
+        //adicionando os enderecos
+        var enderecos = []
+        {% for end in enderecos %}
+            enderecos[enderecos.length] = {
+                "id":{{ end.id }},
+                "cep": {{ end.cep }},
+                "cidade": "{{ end.cidade }}",
+                "estado": "{{ end.estado }}",
+                "rua": "{{ end.rua }}",
+                "numero": "{{ end.numero }}",
+                "bairro": "{{ end.bairro }}",
+                "descricao": "{{ end.descricao }}",
+            }
+        {% endfor %}
+
+        for(let i = 0; i < enderecos.length; i++){
+            $('#local-retirada').append($('<option>', {
+                value: i+1,
+                text: `${enderecos[i].descricao}`
+            }));
+        }
+        for(let i = 0; i < enderecos.length; i++){
+            $('#local-devolucao').append($('<option>', {
+                value: i+2,
+                text: `${enderecos[i].descricao}`
+            }));
+        }
+    </script>
+{% endblock %}

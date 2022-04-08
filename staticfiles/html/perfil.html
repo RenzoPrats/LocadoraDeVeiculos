@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block corpo_pagina %}
+    <div class="site-section single-personalizado">
+    <div class="container">
+        <h1 class="titulo-perfil">Meus Dados</h1>
+        <div class="row justify-content-center">
+
+            <div class="col-lg-10 mb-5" id="conteudo-dados-pessoais">
+                <form id='formulario-dados-pessoais' name='formulario-dados-pessoais' action='/alterar_dados_pessoais' method='POST'>
+                    {% csrf_token %}
+                    <label>Dados Pessoais</label>
+                    <div class="row dados-perfil" id="div-dados-pessoais">
+                        <div class="form-group col-md-6">
+                            <label for="nome">Nome</label>
+                            <input type="text" id="nome" name="nome" placeholder="Nome" class="form-control"  maxlength='50' value="{{ usuario.first_name }}" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="sobrenome">Sobrenome</label>
+                            <input type="text" id="sobrenome" name="sobrenome" placeholder="Sobrenome" class="form-control"  maxlength='50' value="{{ usuario.last_name }}" required>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="cpf_cnpj">CPF/CNPJ</label>
+                            <input type="text" id="cpf_cnpj" name="cpf_cnpj" placeholder="Cpf/Cnpj" class="form-control"  maxlength='14' value="{{ usuario.cpf_cnpj }}" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="ano_nasc_perfil">Ano do Nascimento</label>
+                            <select  id='ano_nasc_perfil' name='ano_nasc_perfil' class='custom-select mr-sm-2' id='option-ano'>";
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="mes_nasc_perfil">Mês do Nascimento</label>
+                            <select id='mes_nasc_perfil' name='mes_nasc_perfil' class='custom-select mr-sm-2' id='option-mes' onchange='verificaMes()'>";
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="dia-nasc_perfil">Dia do Nascimento</label>
+                            <select id='dia_nasc_perfil' name='dia_nasc_perfil' class='custom-select mr-sm-2'>";
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="cep">Cep</label>
+                            <input id='cep' name='cep' type='text' class='form-control' placeholder='CEP' maxlength='8' value="{{ usuario.cep }}" required>
+                        </div>
+                        <div class="form-group col-md-9">
+                            <label for="cidade">Cidade</label>
+                            <input id='cidade' name='cidade' type='text' class='form-control' placeholder='Cidade' maxlength='100' value="{{ usuario.cidade }}" required>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="estado">Sigla Estado</label>
+                            <input id='estado' name='estado' type='text' class='form-control' placeholder='Sigla Estado' maxlength='2' value="{{ usuario.estado }}" required>
+                        </div>
+                        <div class="form-group col-md-9">
+                            <label for="rua">Rua</label>
+                            <input id='rua' name='rua' type='text' class='form-control' placeholder='Rua' maxlength='100' value="{{ usuario.rua }}" required>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="numero">Numero</label>
+                            <input id='numero' name='numero' type='text' class='form-control' placeholder='Número' maxlength='5' value="{{ usuario.numero }}" required>
+                        </div>
+                        <div id='div-bairro-local-retirada' class="form-group col-md-12">
+                            <label for="bairro">Bairro</label>
+                            <input id='bairro' name='bairro' type='text' class='form-control' placeholder='Bairro' maxlength='100' value="{{ usuario.bairro }}" required>
+                        </div>
+                        <div class="col-md-3 mr-auto botao-dados-pessoais">
+                            <input type="submit" class="btn btn-block btn-primary text-white py-2 px-5" value="Salvar Dados">
+                        </div>
+                    </div>
+                </form>
+
+                <br>
+                <br>
+                <form id='formulario-dados-pagamento' name='formulario-dados-pagamento' action='/adicionar_dados_pagamento' method='POST'>
+                    {% csrf_token %}
+                    <label>Dados de Pagamento</label>
+                    <div id='div-dados-pagamento' class="row dados-perfil">
+
+                        <div class="form-group col-md-12">
+                            <label for="dados_pagamento">Método de Pagamento</label>
+                            <select id='dados_pagamento' name='dados_pagamento' class='custom-select mr-sm-2' onchange="adicionaMetodoPagamento()">
+                                <option value="0">Adicionar Método de pagamento</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="tipo_cartao">Tipo de Cartão</label>
+                            <select id='tipo_cartao' name='tipo_cartao' class='custom-select mr-sm-2'>
+                                <option value="0">Débito</option>
+                                <option value="1">Crédito</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="descricao_pagamento">Descrição do Método de Pagamento</label>
+                            <input id='descricao_pagamento' name='descricao_pagamento' type='text' class='form-control' placeholder='Descrição do Método de Pagamento' maxlength="100" required>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="nome_cartao">Nome no cartão</label>
+                            <input id='nome_cartao' name='nome_cartao' type='text' class='form-control' placeholder='Nome no Cartão' maxlength="100" required>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="numero_cartao">Número</label>
+                            <input id='numero_cartao' name='numero_cartao' type='text' class='form-control' placeholder='Número do Cartão' maxlength="16" required>
+                        </div>
+
+                         <div class="form-group col-md-6">
+                            <label for="mes_validade_cartao">Mês de Validade</label>
+                            <select id='mes_validade_cartao' name='mes_validade_cartao' class='custom-select mr-sm-2'>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="ano_validade_cartao">Ano de Validade</label>
+                            <select id='ano_validade_cartao' name='ano_validade_cartao' class='custom-select mr-sm-2'>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label for="codigo_seguranca_cartao">Código de Segurança</label>
+                            <input id='codigo_seguranca_cartao' name='codigo_seguranca_cartao' type='text' class='form-control' placeholder='Código de Segurança' maxlength="4" required>
+                        </div>
+                         <input id="id_dados_pagamento" name="id_dados_pagamento" type="text" style="display: none">
+                        <br>
+                        <div class="col-md-3 mr-auto botao-dados-pagamento">
+                            <input type="submit" class="btn btn-block btn-primary text-white py-2 px-5" value="Salvar Método de Pagamento" style="width: 150%">
+                        </div>
+
+                    </div>
+                </form>
+
+
+                <br>
+                <br>
+                <form id='formulario-dados-endereco' name='formulario-dados-endereco' action='/adicionar_dados_endereco' method='POST'>
+                    {% csrf_token %}
+                    <label>Endereços Extras</label>
+                    <div id='div-dados-endereco' class="row dados-single">
+                        <div class="form-group col-md-12">
+                            <label for="endero-extra">Endereço</label>
+                            <select id='endereco-extra' name='endereco-extra' class='custom-select mr-sm-2' onchange="adicionaEnderecoExtra()">
+                                <option value="0">Adicionar Novo Endereço</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="descricao-endereco">Descrição do Endereço extra</label>
+                            <input id='descricao-endereco' name='descricao-endereco' type='text' class='form-control' placeholder='Descrição do Endereço Extra' required maxlength="100">
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="cep-extra">Cep</label>
+                            <input id='cep-extra' name='cep-extra' type='text' class='form-control' placeholder='Cep' required maxlength="8">
+                        </div>
+
+                        <div class="form-group col-md-9">
+                            <label for="cidade-extra">Cidade</label>
+                            <input id='cidade-extra' name='cidade-extra' type='text' class='form-control' placeholder='Cidade' required maxlength="100">
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label for="estado-extra">Sigla Estado</label>
+                            <input id='estado-extra' name='estado-extra' type='text' class='form-control' placeholder='Sigla Estado' required maxlength="2">
+                        </div>
+
+                        <div class="form-group col-md-9">
+                            <label for="rua-extra">Rua</label>
+                            <input id='rua-extra' name='rua-extra' type='text' class='form-control' placeholder='Rua' required maxlength="100">
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label for="numero-extra">Número</label>
+                            <input id='numero-extra' name='numero-extra' type='text' class='form-control' placeholder='Número' required maxlength="5">
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="bairro-extra">Bairro</label>
+                            <input id='bairro-extra' name='bairro-extra' type='text' class='form-control' placeholder='Bairro' required maxlength="100">
+                        </div>
+                        <input id="id_endereco_extra" name="id_endereco_extra" type="text" style="display: none">
+
+                        <div class="col-md-3 mr-auto botao-endereco-extra">
+                            <input type="submit" class="btn btn-block btn-primary text-white py-2 px-5" value="Salvar Endereço Extra" style="width: 150%">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+    <script src="{% static 'script_paginas/script_perfil.js' %}"></script>
+    <script>
+        $("#ano_nasc_perfil").val('{{ usuario.data_nascimento.year }}')
+        $("#mes_nasc_perfil").val('{{ usuario.data_nascimento.month }}')
+        $("#dia_nasc_perfil").val('{{ usuario.data_nascimento.day }}')
+        {% if messages %}
+              {% for m in messages %}
+                  {% if m.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                      Swal.fire({
+                          icon: 'error',
+                          title: '{{ m }}',
+                          showConfirmButton: true,
+                      })
+                  {% else %}
+                      Swal.fire({
+                          icon: 'success',
+                          title: '{{ m }}',
+                          showConfirmButton: true,
+                      })
+                  {% endif %}
+
+              {% endfor %}
+        {% endif %}
+
+        //adiciona os metodos de pagamento
+        var metodos_pagamento = []
+        {% for mp in metodos_pagamento %}
+            metodos_pagamento[metodos_pagamento.length] = {
+                "id" : {{ mp.id }},
+                "tipo_cartao": {{ mp.tipo_cartao }},
+                "descricao": "{{ mp.descricao }}",
+                "nome_cartao": "{{ mp.nome_cartao }}",
+                "numero_cartao": "{{ mp.numero_cartao }}",
+                "ano_validade": {{ mp.ano_validade }},
+                "mes_validade": {{ mp.mes_validade }},
+                "codigo_seguranca": {{ mp.codigo_seguranca }},
+            }
+        {% endfor %}
+
+        //Adiciona os dados de pagamento existentes no select Método de pagamento
+        for(let i = 0; i < metodos_pagamento.length; i++){
+            $('#dados_pagamento').append($('<option>', {
+                value: i+1,
+                text: `${metodos_pagamento[i].descricao}`
+            }));
+        }
+
+        //adiciona os endereços extras
+        var enderecos_extras = []
+        {% for end in enderecos_extras %}
+            enderecos_extras[enderecos_extras.length] = {
+                "id":{{ end.id }},
+                "cep": {{ end.cep }},
+                "cidade": "{{ end.cidade }}",
+                "estado": "{{ end.estado }}",
+                "rua": "{{ end.rua }}",
+                "numero": "{{ end.numero }}",
+                "bairro": "{{ end.bairro }}",
+                "descricao": "{{ end.descricao }}",
+            }
+        {% endfor %}
+
+        for(let i = 0; i < enderecos_extras.length; i++){
+            $('#endereco-extra').append($('<option>', {
+                value: i+1,
+                text: `${enderecos_extras[i].descricao}`
+            }));
+        }
+        //mascara numero
+        $("#cpf_cnpj, #cep, #numero, #numero_cartao,#codigo_seguranca_cartao,#cep-extra,#numero-extra").on("input", function (e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+    </script>
+{% endblock %}

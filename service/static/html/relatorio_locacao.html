@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block corpo_pagina %}
+    <h1 class="titulo-locacao">Relatórios de Locação</h1>
+    <table class="table tabela-locacao table-bordered">
+      <thead class="thead-dark">
+        <tr>
+            <th scope="col">Número da locação</th>
+            <th scope="col">Veículo</th>
+            <th scope="col">Pagamento</th>
+            <th scope="col">Endereço de Retirada</th>
+            <th scope="col">Data e Hora de Retirada</th>
+            <th scope="col">Endereço de Devolução</th>
+            <th scope="col">Data e Hora de Devolução</th>
+            <th scope="col">Valor Total</th>
+            <th scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for l in locacoes %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ l.carro.modelo }}</td>
+                <td>{%  if l.metodo_pagamento  %}{{ l.metodo_pagamento.descricao }}{% else %}Dinheiro{% endif %}</td>
+                <td>{{ l.endereco_retirada.rua }}, {{ l.endereco_retirada.numero }}, {{ l.endereco_retirada.bairro }}, {{ l.endereco_retirada.cidade }}</td>
+                <td>{{ l.data }}</td>
+                <td>{{ l.endereco_devolucao.rua }}, {{ l.endereco_devolucao.numero }}, {{ l.endereco_devolucao.bairro }}, {{ l.endereco_devolucao.cidade }}</td>
+                <td>{{ l.devolucao }}</td>
+                <td>R${{ l.valor_total }}</td>
+                <td id="status{{ forloop.counter }}">Em Processo</td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <script src="{% static 'script_paginas/relatorio.js' %}"></script>
+    <script>
+        var statuss;
+         {% for c in concluidos %}
+             {% if c == 0 %}
+                statuss = "Em Processo";
+             {% else %}
+                statuss = "Concluído"
+             {% endif %}
+            $("#status{{ forloop.counter }}").text(statuss)
+         {% endfor %}
+    </script>
+{% endblock %}
